@@ -20,14 +20,14 @@ async def on_microg(c: AndroidRepo, q: CallbackQuery):
         await q.answer("This button is not for you.", cache_time=60)
         return
 
-    if app == "vending":
-        app_id = "com.android.vending"
     if app == "droidguard":
         app_id = "org.microg.gms.droidguard"
-    if app == "gms":
+    elif app == "gms":
         app_id = "com.google.android.gms"
-    if app == "gsf":
+    elif app == "gsf":
         app_id = "com.google.android.gsf"
+    elif app == "vending":
+        app_id = "com.android.vending"
 
     async with httpx.AsyncClient(http2=True) as client:
         response = await client.get("https://microg.org/fdroid/repo/index.xml")
@@ -59,13 +59,11 @@ async def on_microg(c: AndroidRepo, q: CallbackQuery):
 
 
 @AndroidRepo.on_message(filters.cmd("microg"))
-@AndroidRepo.on_callback_query(filters.regex(r"^microg$"))
+@AndroidRepo.on_callback_query(filters.regex("^microg$"))
 async def microg_menu(c: AndroidRepo, u: Union[Message, CallbackQuery]):
     is_callback = isinstance(u, CallbackQuery)
     union = u.message if is_callback else u
-
     user_id = u.from_user.id
-
     keyboard = [
         [
             ("FakeStore", f"microg vending {user_id}"),
@@ -77,8 +75,10 @@ async def microg_menu(c: AndroidRepo, u: Union[Message, CallbackQuery]):
         ],
     ]
 
-    text = "<b>microG Project</b>\n"
-    text += "<i>A free-as-in-freedom re-implementation of Google's proprietary Android user space apps and libraries.</i>"
+    text = (
+        "<b>microG Project</b>\n"
+        + "<i>A free-as-in-freedom re-implementation of Google's proprietary Android user space apps and libraries.</i>"
+    )
 
     await (union.edit_text if is_callback else union.reply_text)(
         text, reply_markup=c.ikb(keyboard)

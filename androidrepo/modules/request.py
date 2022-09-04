@@ -150,8 +150,7 @@ async def on_cancelrequest_m(c: AndroidRepo, m: Message):
 
 @AndroidRepo.on_message((filters.chat(STAFF_ID) | filters.sudo) & filters.cmd("ignore"))
 async def on_ignore_m(c: AndroidRepo, m: Message):
-    reply = m.reply_to_message
-    if reply:
+    if reply := m.reply_to_message:
         user = reply.from_user
     else:
         text_splited = m.text.split()
@@ -192,8 +191,7 @@ async def on_ignore_m(c: AndroidRepo, m: Message):
     (filters.chat(STAFF_ID) | filters.sudo) & filters.cmd("unignore")
 )
 async def on_unignore_m(c: AndroidRepo, m: Message):
-    reply = m.reply_to_message
-    if reply:
+    if reply := m.reply_to_message:
         user = reply.from_user
     else:
         text_splited = m.text.split()
@@ -201,27 +199,23 @@ async def on_unignore_m(c: AndroidRepo, m: Message):
             user = text_splited[1]
         elif not text_splited:
             return await m.reply_text("Specify someone.")
-
     if not isinstance(user, User):
         try:
             user = await c.get_users(user)
         except BaseException:
             return await m.reply_text("This user was not found.")
-
     if user.id in SUDO_USERS:
         return
-
     requests = await get_request_by_user_id(user_id=user.id)
     if requests:
         last_request = requests[-1]
     else:
         return await m.reply_text(f"{user.mention} is not ignored.")
-
     if bool(last_request.ignore):
         await update_request_from_dict(
-            request=last_request,
-            data={"attempts": 0, "ignore": 0},
+            request=last_request, data={"attempts": 0, "ignore": 0}
         )
+
         await last_request.save()
         return await m.reply_text(f"{user.mention} can send requests again.")
     return await m.reply_text(f"{user.mention} is not ignored.")
@@ -238,8 +232,9 @@ async def on_done_m(c: AndroidRepo, m: Message):
         user_id = request["user"]
         request_id = request["request_id"]
         staff_msg = (
-            f"<code>{m.text[len(command)+1:]}</code>" if len(query) > 1 else "None"
+            f"<code>{m.text[len(command) + 1:]}</code>" if len(query) > 1 else "None"
         )
+
         doc = KanTeXDocument(
             Section(
                 "Request done",
@@ -252,10 +247,10 @@ async def on_done_m(c: AndroidRepo, m: Message):
                 Italic("Don't be surprised, it will disappear from your request list."),
             ),
         )
-        try:
+
+        with suppress(UserIsBlocked):
             await c.send_message(chat_id=user_id, text=doc)
-        except UserIsBlocked:
-            pass
+
         await delete_request(user_id=user_id, request_id=request_id)
         await m.reply_text("The request was successfully done.")
 

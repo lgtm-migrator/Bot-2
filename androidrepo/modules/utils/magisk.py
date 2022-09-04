@@ -2,6 +2,7 @@
 # Copyright (c) 2021-2022 Hitalo M. <https://github.com/HitaloM>
 
 import asyncio
+import contextlib
 import io
 import os
 import shutil
@@ -88,7 +89,7 @@ async def check_modules(c: Client):
                 if _module["id"] == module["id"]:
                     del modules["list"][index]
             await delete_module(id=_module["id"])
-    if len(updated_modules) > 0 or len(excluded_modules) > 0:
+    if updated_modules or excluded_modules:
         await c.send_log_message(
             config.LOGS_ID,
             f"""
@@ -109,27 +110,25 @@ async def get_modules(m: Message):
     modules = await get_all_modules()
     modules_list = []
     if len(modules) > 0:
-        for module in modules:
-            modules_list.append(
-                dict(
-                    id=module["id"],
-                    url=module["url"],
-                    name=module["name"],
-                    version=module["version"],
-                    version_code=module["version_code"],
-                    last_update=module["last_update"],
-                )
+        modules_list.extend(
+            dict(
+                id=module["id"],
+                url=module["url"],
+                name=module["name"],
+                version=module["version"],
+                version_code=module["version_code"],
+                last_update=module["last_update"],
             )
+            for module in modules
+        )
+
         document = io.BytesIO(str(json.dumps(modules_list, indent=4)).encode())
         document.name = "modules.json"
         return await m.reply_document(
-            caption=(
-                "<b>Magisk Modules</b>\n"
-                f"<b>Modules count</b>: <code>{len(modules)}</code>\n"
-                f"<b>Date</b>: <code>{date}</code>"
-            ),
+            caption=f"<b>Magisk Modules</b>\n<b>Modules count</b>: <code>{len(modules)}</code>\n<b>Date</b>: <code>{date}</code>",
             document=document,
         )
+
     return await m.reply_text("No modules were found.")
 
 
@@ -138,23 +137,25 @@ async def get_magisk(m: Message):
     magisks = await get_all_magisk()
     magisks_list = []
     if len(magisks) > 0:
-        for magisk in magisks:
-            magisks_list.append(
-                dict(
-                    branch=magisk["branch"],
-                    version=magisk["version"],
-                    versionCode=magisk["version_code"],
-                    link=magisk["link"],
-                    note=magisk["note"],
-                    changelog=magisk["changelog"],
-                )
+        magisks_list.extend(
+            dict(
+                branch=magisk["branch"],
+                version=magisk["version"],
+                versionCode=magisk["version_code"],
+                link=magisk["link"],
+                note=magisk["note"],
+                changelog=magisk["changelog"],
             )
+            for magisk in magisks
+        )
+
         document = io.BytesIO(str(json.dumps(magisks_list, indent=4)).encode())
         document.name = "magisk.json"
         return await m.reply_document(
-            caption=("<b>Magisk Releases</b>\n" f"<b>Date</b>: <code>{date}</code>"),
+            caption=f"<b>Magisk Releases</b>\n<b>Date</b>: <code>{date}</code>",
             document=document,
         )
+
     return await m.reply_text("No Magisks found.")
 
 
@@ -180,15 +181,28 @@ async def parse_module(data: str) -> Dict:
 
 async def update_module(c: Client, module: Dict):
     file_name = (
-        module["name"].replace("-", "").replace(" ", "-").replace("--", "")
-        + "_"
-        + module["version"]
-        + "_"
-        + "("
-        + module["versionCode"]
+        (
+            (
+                (
+                    (
+                        (
+                            module["name"]
+                            .replace("-", "")
+                            .replace(" ", "-")
+                            .replace("--", "")
+                            + "_"
+                        )
+                        + module["version"]
+                    )
+                    + "_"
+                )
+                + "("
+            )
+            + module["versionCode"]
+        )
         + ")"
-        + ".zip"
-    )
+    ) + ".zip"
+
     file_path = DOWNLOAD_DIR + file_name
     async with aiodown.Client() as client:
         download = client.add(module["url"], file_path)
@@ -214,10 +228,8 @@ async def update_module(c: Client, module: Dict):
             if name not in [" ", ""] and not name.startswith("."):
                 new_zip.write(file, name)
         new_zip.close()
-    try:
+    with contextlib.suppress(BaseException):
         shutil.rmtree(extraction_path)
-    except BaseException:
-        pass
     caption = f"""
 <b>{module["name"]} {"v" if module["version"][0].isdecimal() else ""}{module["version"]} ({module["versionCode"]})</b>
 
@@ -228,9 +240,11 @@ async def update_module(c: Client, module: Dict):
 <b>By:</b> {module["author"]}
 <b>Follow:</b> @AndroidRepo
     """
+
     await c.send_channel_document(
         caption=caption, document=file_path, force_document=True
     )
+
     os.remove(file_path)
     await update_module_by_dict(
         id=module["id"],

@@ -130,7 +130,7 @@ async def on_terminal_m(c: AndroidRepo, m: Message):
     lines = stdout.decode().split("\n")
     output = "".join(f"<code>{line}</code>\n" for line in lines)
     output_message = f"<b>Input\n&gt;</b> <code>{code}</code>\n\n"
-    if len(output) > 0:
+    if output != "":
         if len(output) > (4096 - len(output_message)):
             document = io.BytesIO(
                 (output.replace("<code>", "").replace("</code>", "")).encode()

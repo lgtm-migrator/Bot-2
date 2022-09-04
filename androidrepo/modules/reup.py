@@ -56,7 +56,7 @@ async def reupload(c: AndroidRepo, m: Message):
         await client.start()
 
         last_update = datetime.now()
-        while not download.get_status() == "finished":
+        while download.get_status() != "finished":
             if download.get_status() == "failed":
                 await m.reply_text("Download failed!")
                 return

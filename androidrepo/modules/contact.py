@@ -46,9 +46,7 @@ async def is_contact(_, __, m) -> bool:
     if not user:
         return False
     contact = await get_contact_by_id(user_id=user.id)
-    if contact is None:
-        return False
-    return len(contact) > 0
+    return False if contact is None else len(contact) > 0
 
 
 filters.is_contact = filters.create(is_contact, "IsContactFilter")

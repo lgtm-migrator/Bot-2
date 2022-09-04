@@ -32,16 +32,17 @@ async def get_lsposed(m: Message):
     lsposeds = await get_all_lsposed()
     lsposed_list = []
     if len(lsposeds) > 0:
-        for lsposed in lsposeds:
-            lsposed_list.append(
-                dict(
-                    branch=lsposed["branch"],
-                    version=lsposed["version"],
-                    versionCode=lsposed["version_code"],
-                    link=lsposed["link"],
-                    changelog=lsposed["changelog"],
-                )
+        lsposed_list.extend(
+            dict(
+                branch=lsposed["branch"],
+                version=lsposed["version"],
+                versionCode=lsposed["version_code"],
+                link=lsposed["link"],
+                changelog=lsposed["changelog"],
             )
+            for lsposed in lsposeds
+        )
+
         document = io.BytesIO(str(json.dumps(lsposed_list, indent=4)).encode())
         document.name = "lsposed.json"
         return await m.reply_document(
@@ -70,6 +71,7 @@ async def update_lsposed(c: Client, branch: str):
                 f"<b>Date</b>: <code>{date}</code>\n"
                 "#Sync #LSPosed #Releases",
             )
+
         data = response.json()
         _lsposed = await get_lsposed_by_branch(branch=branch)
         if _lsposed is None:
@@ -81,6 +83,7 @@ async def update_lsposed(c: Client, branch: str):
                 link=data["zipUrl"],
                 changelog=chg,
             )
+
             return await c.send_log_message(
                 config.LOGS_ID,
                 "<b>No data in the database.</b>\n"
@@ -89,11 +92,11 @@ async def update_lsposed(c: Client, branch: str):
                 f"<b>Date</b>: <code>{date}</code>\n"
                 "#Sync #LSPosed #Releases",
             )
+
         if _lsposed["version"] == data["version"] or int(
             _lsposed["version_code"]
         ) == int(data["versionCode"]):
             return
-
         async with aiodown.Client() as client:
             file_name = os.path.basename(data["zipUrl"])
             file_path = DOWNLOAD_DIR + file_name
@@ -103,28 +106,30 @@ async def update_lsposed(c: Client, branch: str):
                 await asyncio.sleep(0.5)
             if download.get_status() == "failed":
                 return
-
         caption = f"<b>{branch.capitalize()} - LSPosed {data['version']} ({data['versionCode']})</b>\n\n"
+
         caption += "⚡<i>Magisk Module</i>\n"
-        if branch == "zygisk":
-            caption += "⚡<i>Another enhanced implementation of Xposed Framework. Requires Magisk 24.0+ and Zygisk enabled.</i>\n"
         if branch == "riru":
             caption += "⚡<i>Another enhanced implementation of Xposed Framework. Requires Riru 25.0.1 or above installed.</i>\n"
+
+        elif branch == "zygisk":
+            caption += "⚡<i>Another enhanced implementation of Xposed Framework. Requires Magisk 24.0+ and Zygisk enabled.</i>\n"
+
         caption += (
             "⚡️<a href='https://github.com/LSPosed/LSPosed'>GitHub Repository</a>\n"
         )
+
         caption += f"⚡️<a href='{data['changelog']}'>Changelog</a>\n"
         caption += "\n<b>By:</b> LSPosed Developers\n"
         caption += "<b>Follow:</b> @AndroidRepo"
-
         await c.send_channel_document(
             caption=caption,
             document=file_path,
             parse_mode=ParseMode.DEFAULT,
             force_document=True,
         )
-        os.remove(file_path)
 
+        os.remove(file_path)
         chg = await get_changelog(data["changelog"])
         await update_lsposed_from_dict(
             branch=branch,
@@ -135,6 +140,7 @@ async def update_lsposed(c: Client, branch: str):
                 "changelog": chg,
             },
         )
+
         return await c.send_log_message(
             config.LOGS_ID,
             "<b>LSPosed Releases check finished</b>\n"

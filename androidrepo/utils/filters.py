@@ -16,7 +16,7 @@ def command_filter(
     *args,
     **kwargs,
 ) -> Callable:
-    pattern = r"^" + f"[{re.escape(''.join(PREFIXES))}]" + command
+    pattern = f"^[{re.escape(''.join(PREFIXES))}]{command}"
     if not pattern.endswith(("$", " ")):
         pattern += r"(?:\s|$)"
 
@@ -52,9 +52,7 @@ def command_filter(
 
 async def sudo_filter(_, client, union: Union[CallbackQuery, Message]) -> Callable:
     user = union.from_user
-    if not user:
-        return False
-    return client.is_sudoer(user)
+    return client.is_sudoer(user) if user else False
 
 
 filters.cmd = command_filter
