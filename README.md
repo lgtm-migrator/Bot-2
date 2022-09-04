@@ -30,10 +30,10 @@ their time and `AndroidRepo` is no different.
 
 ### Tools and tips
 
-* Use [black](https://github.com/psf/black) and [isort](https://github.com/PyCQA/isort) (with black profile).
-* Don't forget to add the [SPDX-License-Identifier](https://spdx.dev/ids/) header.
-* Try to resolve any problems identified by our CI.
+- Use [black](https://github.com/psf/black) and [isort](https://github.com/PyCQA/isort) (with black profile).
+- Don't forget to add the [SPDX-License-Identifier](https://spdx.dev/ids/) header.
+- Try to resolve any problems identified by our CI.
 
 ## License
 
-[GPLv3](https://github.com/AndroidRepo-OSS/Bot/blob/main/LICENSE) © 2022 [AndroidRepo-OSS](https//github.com/AndroidRepo-OSS)
+[BSD-3-Clause](https://github.com/AndroidRepo-OSS/Bot/blob/main/LICENSE) © 2022 [AndroidRepo-OSS](https//github.com/AndroidRepo-OSS)
