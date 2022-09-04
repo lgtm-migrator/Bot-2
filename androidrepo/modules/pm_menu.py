@@ -1,5 +1,5 @@
 # SPDX-License-Identifier: GPL-3.0
-# Copyright (c) 2021-2022 Amano Team
+# Copyright (c) 2021-2022 Hitalo M. <https://github.com/HitaloM>
 
 import html
 from typing import Union
@@ -88,7 +88,7 @@ async def about(c: AndroidRepo, union: Union[Message, CallbackQuery]):
 
     keyboard = [
         [
-            ("📦 GitHub", "https://github.com/AmanoTeam/AndroidRepo", "url"),
+            ("📦 GitHub", "https://github.com/AndroidRepo-OSS/Bot", "url"),
             ("📚 Channel", "https://t.me/HitaloProjects", "url"),
         ]
     ]
@@ -108,7 +108,7 @@ async def about(c: AndroidRepo, union: Union[Message, CallbackQuery]):
                 "\n\n<b>Version</b>: {version} (<code>{version_code}</code>)"
             ).format(
                 bot_name=c.me.first_name,
-                version=f"<a href='https://github.com/AmanoTeam/AndroidRepo/commit/{c.version}'>{c.version}</a>",
+                version=f"<a href='https://github.com/AndroidRepo-OSS/Bot/commit/{c.version}'>{c.version}</a>",
                 version_code=c.version_code,
             )
         ),

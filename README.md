@@ -1,8 +1,8 @@
 # Android Repository - Telegram Bot
 
-[![Codacy Badge](https://api.codacy.com/project/badge/Grade/025bfe51e380490695e8c0dd3c36a450)](https://app.codacy.com/gh/AmanoTeam/AndroidRepo?utm_source=github.com&utm_medium=referral&utm_content=AmanoTeam/AndroidRepo&utm_campaign=Badge_Grade_Settings)
+[![Codacy Badge](https://api.codacy.com/project/badge/Grade/025bfe51e380490695e8c0dd3c36a450)](https://app.codacy.com/gh/AndroidRepo-OSS/Bot?utm_source=github.com&utm_medium=referral&utm_content=AndroidRepo-OSS/Bot&utm_campaign=Badge_Grade_Settings)
 [![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
-[![GitHub contributors](https://img.shields.io/github/contributors/AmanoTeam/AndroidRepo.svg)](https://GitHub.com/AmanoTeam/AndroidRepo/graphs/contributors/)
+[![GitHub contributors](https://img.shields.io/github/contributors/AndroidRepo-OSS/Bot.svg)](https://GitHub.com/AndroidRepo-OSS/Bot/graphs/contributors/)
 
 ## Introduction
 
@@ -18,7 +18,7 @@ their time and `AndroidRepo` is no different.
 
 ### Instructions
 
-1. Clone this Git repository locally: `git clone https://github.com/AmanoTeam/AndroidRepo`
+1. Clone this Git repository locally: `git clone https://github.com/AndroidRepo-OSS/Bot`
 2. Create a virtualenv (This step is optional, but highly recommended to avoid dependency conflicts)
    - `python3 -m venv .venv` (You don't need to run it again)
    - `. .venv/bin/activate` (You must run this every time you open the project in a new shell)
@@ -36,4 +36,4 @@ their time and `AndroidRepo` is no different.
 
 ## License
 
-[GPLv3](https://github.com/AmanoTeam/AndroidRepo/blob/main/LICENSE) © 2022 [AmanoTeam](https//github.com/AmanoTeam)
+[GPLv3](https://github.com/AndroidRepo-OSS/Bot/blob/main/LICENSE) © 2022 [AndroidRepo-OSS](https//github.com/AndroidRepo-OSS)

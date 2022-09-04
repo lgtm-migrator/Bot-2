@@ -2,7 +2,7 @@
 name = "androidrepo"
 version = "1.0.0"
 description = "The official bot of AndroidRepo @ Telegram"
-authors = ["Hitalo <contact@amanoteam.com>"]
+authors = ["Hitalo <hitalo@amanoteam.com>"]
 license = "GPLv3"
 readme = "README.md"
 

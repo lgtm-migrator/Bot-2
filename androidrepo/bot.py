@@ -1,5 +1,5 @@
 # SPDX-License-Identifier: GPL-3.0
-# Copyright (c) 2021-2022 Amano Team
+# Copyright (c) 2021-2022 Hitalo M. <https://github.com/HitaloM>
 
 import logging
 import platform
@@ -74,7 +74,7 @@ class AndroidRepo(Client):
                 await self.send_message(
                     chat_id=user,
                     text=(
-                        f"<b>AndroidRepo</b> <a href='https://github.com/AmanoTeam/AndroidRepo/commit/{self.version}'>{self.version}</a> (<code>{self.version_code}</code>) started!\n"
+                        f"<b>AndroidRepo</b> <a href='https://github.com/AndroidRepo-OSS/Bot/commit/{self.version}'>{self.version}</a> (<code>{self.version_code}</code>) started!\n"
                         f"- <b>Pyrogram:</b> <code>v{pyrogram.__version__}</code>\n"
                         f"- <b>Python:</b> <code>v{platform.python_version()}</code>\n"
                         f"- <b>System:</b> <code>{self.system_version}</code>"
