@@ -22,6 +22,7 @@ from androidrepo.database.requests import (
     get_request_by_request_id,
     get_request_by_user_id,
     update_request,
+    update_request_from_dict,
 )
 
 
@@ -73,7 +74,10 @@ async def on_request_m(c: AndroidRepo, m: Message):
                     "You have spammed too many requests, so you will be ignored."
                 )
             if (now - last).seconds < (3 * 60):
-                last_request.update_from_dict({"attempts": (last_request.attempts) + 1})
+                await update_request_from_dict(
+                    request=last_request,
+                    data={"attempts": (last_request.attempts) + 1},
+                )
                 await last_request.save()
                 await c.send_log_message(
                     STAFF_ID, f"{user.mention} is spamming requests."
@@ -175,7 +179,10 @@ async def on_ignore_m(c: AndroidRepo, m: Message):
         return await m.reply_text(f"{user.mention} can't send requests.")
 
     if not bool(last_request.ignore):
-        last_request.update_from_dict({"ignore": 1})
+        await update_request_from_dict(
+            request=last_request,
+            data={"ignore": 1},
+        )
         await last_request.save()
         return await m.reply_text(f"{user.mention} is prevented from sending requests.")
     return await m.reply_text(f"{user.mention} is already ignored.")
@@ -211,7 +218,10 @@ async def on_unignore_m(c: AndroidRepo, m: Message):
         return await m.reply_text(f"{user.mention} is not ignored.")
 
     if bool(last_request.ignore):
-        last_request.update_from_dict({"attempts": 0, "ignore": 0})
+        await update_request_from_dict(
+            request=last_request,
+            data={"attempts": 0, "ignore": 0},
+        )
         await last_request.save()
         return await m.reply_text(f"{user.mention} can send requests again.")
     return await m.reply_text(f"{user.mention} is not ignored.")

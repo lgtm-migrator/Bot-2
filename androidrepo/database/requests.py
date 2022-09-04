@@ -68,7 +68,25 @@ async def update_request(
 ) -> None:
     await conn.execute(
         "UPDATE requests SET time = ?, ignore = ?, request = ?, attempts = ?, request_id = ?, message_id = ? WHERE user = ?",
-        (time, ignore, request, attempts, message_id, user_id),
+        (time, ignore, request, attempts, request_id, message_id, user_id),
+    )
+    if conn.total_changes <= 0:
+        raise AssertionError
+    await conn.commit()
+
+
+async def update_request_from_dict(request: int, data: Dict):
+    await conn.execute(
+        "UPDATE requests SET time = ?, ignore = ?, request = ?, attempts = ?, request_id = ?, message_id = ? WHERE request_id = ?",
+        (
+            data["time"],
+            data["ignore"],
+            data["request"],
+            data["attempts"],
+            data["request_id"],
+            data["message_id"],
+            request,
+        ),
     )
     if conn.total_changes <= 0:
         raise AssertionError
